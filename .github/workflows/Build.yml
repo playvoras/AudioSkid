@@ -1,0 +1,53 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  BuildWindows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B Build -S WindowsServer -DCMAKE_BUILD_TYPE=Release
+
+      - name: Compile
+        run: cmake --build Build --config Release
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: AudioSkidServer
+          path: Build/Release/AudioSkidServer.exe
+
+  BuildAndroid:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: SetupJava
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+
+      - name: SetupGradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Compile
+        working-directory: AndroidClient
+        run: gradle assembleRelease
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: AudioSkidClient
+          path: AndroidClient/app/build/outputs/apk/release/*.apk
