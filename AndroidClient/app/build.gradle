@@ -13,13 +13,7 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-        
-        externalNativeBuild {
-            cmake {
-                cppFlags "-Ofast -flto -fvisibility=hidden -fomit-frame-pointer"
-            }
-        }
-        
+
         ndk {
             abiFilters 'arm64-v8a'
         }
@@ -27,13 +21,12 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            minifyEnabled false
+            shrinkResources false
             signingConfig signingConfigs.debug
         }
     }
-    
+
     externalNativeBuild {
         cmake {
             path file("src/main/cpp/CMakeLists.txt")
